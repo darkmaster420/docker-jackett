@@ -1,3 +1,4 @@
+
 # syntax=docker/dockerfile:1
 
 FROM ghcr.io/linuxserver/baseimage-alpine:3.18
@@ -17,56 +18,31 @@ LABEL maintainer="thelamer"
 # environment settings
 
 ENV XDG_DATA_HOME="/config" \
-
-XDG_CONFIG_HOME="/config"
+    XDG_CONFIG_HOME="/config"
 
 RUN \
-
-echo "**** install packages ****" && \
-
-apk --no-cache add \
-
-icu-libs && \ # Removed 'icu-data-full' package since it is not necessary
-
-echo "**** install jackett ****" && \
-
-mkdir -p \
-
-/app/Jackett && \
-
-if [ -z "${JACKETT_RELEASE}" ]; then \ # Fixed typo in variable referencing
-
-JACKETT_RELEASE=$(curl -sX GET "https://api.github.com/repos/Jackett/Jackett/releases/latest" \
-
-| jq -r .tag_name); \
-
-fi && \
-
-curl -o \
-
-/tmp/jacket.tar.gz -L \
-
-"https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxMuslAMDx64.tar.gz" && \
-
-tar xf \
-
-/tmp/jacket.tar.gz -C \
-
-/app/Jackett --strip-components=1 && \
-
-echo "**** fix for host id mapping error ****" && \
-
-chown -R root:root /app/Jackett && \ # Removed redundant chown command
-
-echo "**** save docker image version ****" && \
-
-echo "${VERSION}" > /etc/docker-image && \
-
-echo "**** cleanup ****" && \
-
-rm -rf \
-
-/tmp/*
+    echo "**** install packages ****" && \
+    apk --no-cache add \
+    icu-libs && \ 
+    echo "**** install jackett ****" && \
+    mkdir -p \
+    /app/Jackett && \
+    if [ -z "${JACKETT_RELEASE}" ]; then \ 
+      JACKETT_RELEASE=$(curl -sX GET "https://api.github.com/repos/Jackett/Jackett/releases/latest" \
+      | jq -r .tag_name); \
+    fi && \
+    curl -o \
+    /tmp/jacket.tar.gz -L \
+    "https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxMuslAMDx64.tar.gz" && \
+    tar xf \
+    /tmp/jacket.tar.gz -C \
+    /app/Jackett --strip-components=1 && \
+    echo "**** fix for host id mapping error ****" && \
+    echo "**** save docker image version ****" && \
+    echo "${VERSION}" > /etc/docker-image && \
+    echo "**** cleanup ****" && \
+    rm -rf \
+    /tmp/*
 
 # add local files
 
